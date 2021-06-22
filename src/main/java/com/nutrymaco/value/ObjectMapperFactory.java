@@ -1,13 +1,13 @@
 package com.nutrymaco.value;
 
-import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.util.List;
 
 public class ObjectMapperFactory {
+
+    private static ObjectMapper instance;
 
     @SuppressWarnings("rawtypes")
     private final List<Class> targetClasses;
@@ -18,18 +18,20 @@ public class ObjectMapperFactory {
     }
 
 
-    public ObjectMapper getObjectMapper() {
-        return getObjectMapper(new ObjectMapper());
+    public synchronized ObjectMapper getObjectMapper() {
+        if (instance != null) {
+            return instance;
+        }
+        var objectMapper = new ObjectMapper();
+        setUpObjectMapper(objectMapper);
+        instance = objectMapper;
+        return objectMapper;
     }
 
-    public ObjectMapper getObjectMapper(ObjectMapper existingObjectMapper) {
-        setUpObjectMapper(existingObjectMapper);
-        return existingObjectMapper;
-    }
-
-    private void setUpObjectMapper(ObjectMapper objectMapper) {
-        objectMapper.registerModule(new SimpleModule().addDeserializer(Value.class, new ValueDeserializer()));
+    public void setUpObjectMapper(ObjectMapper objectMapper) {
+        objectMapper.registerModule(new ValueModule());
         targetClasses.forEach(clazz -> objectMapper
-                .registerModule(new SimpleModule().addDeserializer(clazz, new MainDeserializer<>(clazz))));
+                .registerModule(new SimpleModule()
+                        .addDeserializer(clazz, new PostMappingProcessor<>(clazz))));
     }
 }

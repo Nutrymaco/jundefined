@@ -1,5 +1,7 @@
 package com.nutrymaco.value;
 
+import java.util.Objects;
+
 public class Value<T> {
 
     private static final Value<?> EMPTY = new Value<>(null, State.EMPTY);
@@ -56,5 +58,18 @@ public class Value<T> {
                 "value=" + value +
                 ", state=" + state +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Value<?> value1 = (Value<?>) o;
+        return Objects.equals(value, value1.value) && state == value1.state;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, state);
     }
 }

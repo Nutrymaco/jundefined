@@ -1,48 +1,45 @@
 package com.nutrymaco.value;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.databind.deser.ValueInstantiator;
+import com.fasterxml.jackson.databind.deser.std.ReferenceTypeDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 
-import java.io.IOException;
 
+class ValueDeserializer extends ReferenceTypeDeserializer<Value<?>> {
 
-class ValueDeserializer extends JsonDeserializer<Value<?>> implements ContextualDeserializer {
+    public ValueDeserializer(JavaType fullType, ValueInstantiator vi, TypeDeserializer typeDeser, JsonDeserializer<?> deser) {
+        super(fullType, vi, typeDeser, deser);
+    }
 
-    private JavaType valueType;
 
     @Override
-    public ValueDeserializer createContextual(DeserializationContext deserializationContext, BeanProperty property) throws JsonMappingException {
-        JavaType wrapperType = property.getType();
-        JavaType valueType = wrapperType.containedType(0);
-        ValueDeserializer deserializer = new ValueDeserializer();
-        deserializer.valueType = valueType;
-        return deserializer;
+    protected ReferenceTypeDeserializer<Value<?>> withResolved(TypeDeserializer typeDeserializer,
+                                                               JsonDeserializer<?> jsonDeserializer) {
+        return new ValueDeserializer(_fullType, _valueInstantiator,
+                typeDeserializer, jsonDeserializer);
     }
 
     @Override
-    public Value<?> deserialize(JsonParser parser, DeserializationContext deserializationContext) throws IOException {
-        var node = deserializationContext.readTree(parser);
-
-        if (node.isMissingNode()) {
-            return Value.undefined();
-        } else {
-            var value = deserializationContext.readValue(parser, valueType);
-            return Value.value(value);
-        }
-    }
-
-    @Override
-    public Value<?> getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+    public Value<?> getNullValue(DeserializationContext deserializationContext) throws JsonMappingException {
         return Value.empty();
     }
 
     @Override
-    public Object getEmptyValue(DeserializationContext ctxt) throws JsonMappingException {
-        return Value.undefined();
+    public Value<?> referenceValue(Object o) {
+        return Value.value(o);
+    }
+
+    @Override
+    public Value<?> updateReference(Value<?> value, Object o) {
+        return Value.value(o);
+    }
+
+    @Override
+    public Object getReferenced(Value<?> value) {
+        return value.isValue() ? value.get() : null;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
@@ -11,15 +12,15 @@ import java.util.Arrays;
 
 import static com.nutrymaco.value.Value.undefined;
 
-class MainDeserializer<T> extends JsonDeserializer<T> {
+class PostMappingProcessor<T> extends JsonDeserializer<T> {
 
-    private final static ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new SimpleModule()
-                        .addDeserializer(Value.class, new ValueDeserializer()));
+    private final static ObjectMapper objectMapper = JsonMapper.builder()
+            .addModule(new ValueModule())
+            .build();
 
     private final Class<T> resultClass;
 
-    public MainDeserializer(Class<T> resultClass) {
+    public PostMappingProcessor(Class<T> resultClass) {
         this.resultClass = resultClass;
     }
 
