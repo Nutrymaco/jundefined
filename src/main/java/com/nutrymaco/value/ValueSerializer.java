@@ -1,5 +1,6 @@
 package com.nutrymaco.value;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -7,6 +8,8 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.ReferenceTypeSerializer;
 import com.fasterxml.jackson.databind.type.ReferenceType;
 import com.fasterxml.jackson.databind.util.NameTransformer;
+
+import java.io.IOException;
 
 class ValueSerializer extends ReferenceTypeSerializer<Value<?>> {
 
@@ -68,6 +71,7 @@ class ValueSerializer extends ReferenceTypeSerializer<Value<?>> {
     public boolean isEmpty(SerializerProvider provider, Value<?> value) {
         return value.isUndefined();
     }
+
 
 
 }

@@ -22,5 +22,6 @@ class ValueModule extends Module {
         setupContext.addDeserializers(new ValueDeserializers());
         setupContext.addSerializers(new ValueSerializers());
         setupContext.addTypeModifier(new ValueTypeModifier());
+        setupContext.addBeanSerializerModifier(new ValueBeanSerializerModifier());
     }
 }

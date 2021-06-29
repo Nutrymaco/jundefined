@@ -21,5 +21,6 @@ class ValueTypeModifier extends TypeModifier {
             }
         } else {
             return type;
-        }    }
+        }
+    }
 }

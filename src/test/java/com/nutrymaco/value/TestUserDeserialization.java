@@ -1,14 +1,19 @@
 package com.nutrymaco.value;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import com.fasterxml.jackson.databind.ser.impl.ReadOnlyClassToSerializerMap;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,12 +70,13 @@ public class TestUserDeserialization {
                 "\"parent\" : null" +
                 "}";
         var user = objectMapper.readValue(userJson, User.class);
-
         System.out.println(user);
         assertEquals(user.getAge(), Value.undefined());
         assertEquals(user.getParent(), Value.empty());
         assertTrue(user.getName().isValue());
     }
+
+
 
     @Test
     public void testSerDerSer() throws JsonProcessingException {
@@ -80,8 +86,8 @@ public class TestUserDeserialization {
         user.setParent(Value.empty());
 
         var userString = objectMapper.writeValueAsString(user);
-
-        var parsedUser = objectMapper.readValue(userString, User.class);
+        System.out.println(userString);
+        var parsedUser = this.objectMapper.readValue(userString, User.class);
 
         assertEquals(user.getName(), parsedUser.getName());
         assertEquals(user.getAge(), parsedUser.getAge());
