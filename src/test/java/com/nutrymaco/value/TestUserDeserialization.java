@@ -1,19 +1,10 @@
 package com.nutrymaco.value;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
-import com.fasterxml.jackson.databind.ser.SerializerFactory;
-import com.fasterxml.jackson.databind.ser.impl.ReadOnlyClassToSerializerMap;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,6 +67,23 @@ public class TestUserDeserialization {
         assertTrue(user.getName().isValue());
     }
 
+    @Test
+    public void testNestedEntityDeserialization() throws JsonProcessingException {
+        String userJson = "{\n" +
+                "  \"name\" : \"Efim\",\n" +
+                "  \"parent\" : {\n" +
+                "    \"age\": 45,\n" +
+                "    \"parent\": null\n" +
+                "  }\n" +
+                "}";
+        var user = objectMapper.readValue(userJson, User.class);
+        System.out.println(user);
+        assertTrue(user.getParent().isValue());
+        var parent = user.getParent().get();
+        assertTrue(parent.getAge().isValue());
+        assertTrue(parent.getParent().isEmpty());
+        assertTrue(parent.getName().isUndefined());
+    }
 
 
     @Test
@@ -92,5 +100,28 @@ public class TestUserDeserialization {
         assertEquals(user.getName(), parsedUser.getName());
         assertEquals(user.getAge(), parsedUser.getAge());
         assertEquals(user.getParent(), parsedUser.getParent());
+    }
+
+    @Test
+    public void testNestedObjSerDerSer() throws JsonProcessingException {
+        var user = new User();
+        user.setName(Value.value("Efim"));
+        user.setAge(Value.undefined());
+        var parent = new User();
+        parent.setParent(Value.undefined());
+        parent.setName(Value.empty());
+        parent.setAge(Value.value(45));
+        user.setParent(Value.value(parent));
+
+        var userString = objectMapper.writeValueAsString(user);
+        System.out.println(userString);
+        var parsedUser = this.objectMapper.readValue(userString, User.class);
+
+        assertEquals(user.getName(), parsedUser.getName());
+        assertEquals(user.getAge(), parsedUser.getAge());
+        var parsedParent = user.getParent().get();
+        assertEquals(parent.getName(), parsedParent.getName());
+        assertEquals(parent.getAge(), parsedParent.getAge());
+        assertEquals(parent.getParent(), parsedParent.getParent());
     }
 }

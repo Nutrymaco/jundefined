@@ -32,6 +32,6 @@ public class ObjectMapperFactory {
         objectMapper.registerModule(new ValueModule());
         targetClasses.forEach(clazz -> objectMapper
                 .registerModule(new SimpleModule()
-                        .addDeserializer(clazz, new PostMappingProcessor<>(clazz))));
+                        .addDeserializer(clazz, new PostMappingProcessor<>(clazz, targetClasses))));
     }
 }
