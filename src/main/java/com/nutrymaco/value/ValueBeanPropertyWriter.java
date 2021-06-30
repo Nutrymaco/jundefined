@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 
-public class ValueBeanPropertyWriter extends BeanPropertyWriter {
+class ValueBeanPropertyWriter extends BeanPropertyWriter {
 
     public ValueBeanPropertyWriter(BeanPropertyWriter base) {
         super(base);

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
 import java.util.List;
 
-public class ValueBeanSerializerModifier extends BeanSerializerModifier {
+class ValueBeanSerializerModifier extends BeanSerializerModifier {
 
     public ValueBeanSerializerModifier() {}
 
