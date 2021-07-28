@@ -6,6 +6,7 @@
 import com.nutrymaco.value.Value;
 import org.jboss.jandex.Index;
 
+@Undefined
 class User {
     Value<String> name;
     Value<Integer> age;
