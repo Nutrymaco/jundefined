@@ -4,6 +4,7 @@
 
 ```java
 import com.nutrymaco.value.Value;
+import org.jboss.jandex.Index;
 
 class User {
     Value<String> name;
@@ -13,8 +14,10 @@ class User {
 
 class Main {
     
-    private final static ObjectMapper objectMapper = 
-            new ObjectMapperFactory(List.of(User.class)).getObjectMapper();
+    Index index;
+    
+    private final ObjectMapper objectMapper = 
+            new ObjectMapperFactory(index).getObjectMapper();
     
     public static void main(String[] args) {
         String userJson = "" +
