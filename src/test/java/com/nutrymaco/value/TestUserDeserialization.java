@@ -2,8 +2,17 @@ package com.nutrymaco.value;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jboss.jandex.Index;
+import org.jboss.jandex.IndexReader;
+import org.jboss.jandex.Indexer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -124,4 +133,23 @@ public class TestUserDeserialization {
         assertEquals(parent.getAge(), parsedParent.getAge());
         assertEquals(parent.getParent(), parsedParent.getParent());
     }
+
+    @Test
+    public void testObjectMapperWithJandex() throws IOException {
+        Indexer indexer = new Indexer();
+        InputStream userClassStream = getClass().getClassLoader()
+                .getResourceAsStream("com/nutrymaco/value/TestUser.class");
+        InputStream annotationClassStream = getClass().getClassLoader()
+                .getResourceAsStream("com/nutrymaco/value/Undefined.class");
+
+        indexer.index(annotationClassStream);
+        indexer.index(userClassStream);
+
+        Index index = indexer.complete();
+
+        var objectMapperFactory = new ObjectMapperFactory(index);
+
+        Assertions.assertTrue(objectMapperFactory.targetClasses.contains(TestUser.class));
+    }
+
 }
