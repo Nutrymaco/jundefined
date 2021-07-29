@@ -4,7 +4,7 @@
 
 ```java
 import com.nutrymaco.value.Value;
-import org.jboss.jandex.Index;
+import org.jboss.jandex.IndexView;
 
 class User {
     Value<String> name;
@@ -14,7 +14,7 @@ class User {
 
 class Main {
     
-    Index index;
+    IndexView index;
     
     private final ObjectMapper objectMapper = 
             new ObjectMapperFactory(index).getObjectMapper();

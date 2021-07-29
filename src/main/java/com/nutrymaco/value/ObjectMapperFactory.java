@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
-import org.jboss.jandex.Index;
+import org.jboss.jandex.IndexView;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public class ObjectMapperFactory {
         this.targetClasses = targetClasses;
     }
 
-    public ObjectMapperFactory(Index index) {
+    public ObjectMapperFactory(IndexView index) {
         this.targetClasses = index.getKnownClasses().stream()
                 .filter(classInfo -> classInfo.annotations().containsKey(DotName.createSimple("com.nutrymaco.value.Undefined")))
                 .map(ClassInfo::name)
