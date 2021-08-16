@@ -37,7 +37,9 @@ class PostMappingProcessor<T> extends JsonDeserializer<T> {
     private void replaceNullOnUndefined(Object objWithNulls) {
         for (var field: objWithNulls.getClass().getDeclaredFields()) {
             try {
+                // todo: do this with setter/constructor
                 if (field.getType().equals(Value.class)) {
+                    field.setAccessible(true);
                     if (field.get(objWithNulls) == null) {
                         field.set(objWithNulls, undefined());
                     } else {
@@ -56,7 +58,8 @@ class PostMappingProcessor<T> extends JsonDeserializer<T> {
                     replaceNullOnUndefined(nestedObj);
                 }
             } catch (IllegalAccessException e) {
-                System.out.printf("cannot access to : %s\n%n", field);
+                // todo add logging
+                System.out.printf("cannot access to : %s\n", field);
             }
         }
     }
