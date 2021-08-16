@@ -35,3 +35,5 @@ class Main {
     }
 }
 ```
+
+it can be used via [Quarkus extension](https://github.com/Nutrymaco/jundefined-quarkus-extension)
