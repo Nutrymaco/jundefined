@@ -11,6 +11,9 @@ class User {
     Value<String> name;
     Value<Integer> age;
     Value<User> parent;
+    /*
+        getters and setters
+    */
 }
 
 class Main {
